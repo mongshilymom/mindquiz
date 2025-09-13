@@ -30,12 +30,12 @@ const quizzes: Quiz[] = [
   {
     title: "Life Choice",
     url: "https://lifechoice.mindquiz.app",
-    description: "작은 성취감으로 주는 보상"
+    description: "내 인생에서 가장 중요한 가치는 무엇일까?"
   },
   {
     title: "First Click",
     url: "https://firstclick.mindquiz.app",
-    description: "아침에 일어나마자 하는 첫 클릭"
+    description: "아침에 일어나자마자 작은 성취감으로 주는 보상"
   }
 ];
 
