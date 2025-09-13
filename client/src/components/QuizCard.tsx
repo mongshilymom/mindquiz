@@ -10,20 +10,20 @@ interface QuizCardProps {
 
 const iconMap = {
   "MBTI": User,
-  "테토젠": Lightbulb,
-  "클루피": Smile,
-  "디시전": GitBranch,
-  "라이프초이스": CheckSquare,
-  "퍼스트클릭": MousePointer,
+  "Teto Egen": Lightbulb,
+  "KLoopi": Smile,
+  "Decision": GitBranch,
+  "Life Choice": CheckSquare,
+  "First Click": MousePointer,
 };
 
 const colorMap = {
   "MBTI": "border-blue-400",
-  "테토젠": "border-amber-400",
-  "클루피": "border-pink-400",
-  "디시전": "border-emerald-400",
-  "라이프초이스": "border-purple-400",
-  "퍼스트클릭": "border-cyan-400",
+  "Teto Egen": "border-amber-400",
+  "KLoopi": "border-pink-400",
+  "Decision": "border-emerald-400",
+  "Life Choice": "border-purple-400",
+  "First Click": "border-cyan-400",
 };
 
 export default function QuizCard({ title, url, description }: QuizCardProps) {
