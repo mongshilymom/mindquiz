@@ -83,9 +83,10 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Noto Sans KR", "var(--font-sans)"],
+        sans: ["Pretendard", "Noto Sans KR", "var(--font-sans)"],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
+        display: ["Pretendard", "Noto Sans KR", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

@@ -1,12 +1,35 @@
-import { ExternalLink } from "lucide-react";
+import { User, Lightbulb, Smile, GitBranch, CheckSquare, MousePointer, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface QuizCardProps {
   title: string;
   url: string;
   description?: string;
+  accentColor?: string;
 }
 
+const iconMap = {
+  "MBTI": User,
+  "테토젠": Lightbulb,
+  "클루피": Smile,
+  "디시전": GitBranch,
+  "라이프초이스": CheckSquare,
+  "퍼스트클릭": MousePointer,
+};
+
+const colorMap = {
+  "MBTI": "border-blue-400",
+  "테토젠": "border-amber-400",
+  "클루피": "border-pink-400",
+  "디시전": "border-emerald-400",
+  "라이프초이스": "border-purple-400",
+  "퍼스트클릭": "border-cyan-400",
+};
+
 export default function QuizCard({ title, url, description }: QuizCardProps) {
+  const IconComponent = iconMap[title as keyof typeof iconMap] || User;
+  const borderColor = colorMap[title as keyof typeof colorMap] || "border-blue-400";
+  
   const handleClick = () => {
     console.log(`Navigating to ${title} quiz: ${url}`);
     window.open(url, '_blank');
@@ -14,21 +37,38 @@ export default function QuizCard({ title, url, description }: QuizCardProps) {
 
   return (
     <div 
-      className="bg-card rounded-lg p-6 border border-card-border hover-elevate active-elevate-2 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1"
+      className={`bg-white/90 backdrop-blur-sm rounded-xl border-t-4 ${borderColor} border border-white/40 shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden group cursor-pointer`}
       onClick={handleClick}
       data-testid={`card-quiz-${title.toLowerCase()}`}
     >
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-semibold text-card-foreground">
+      <div className="p-6">
+        <div className="flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-white to-gray-50 flex items-center justify-center shadow-md">
+            <IconComponent className="w-8 h-8 text-gray-600" />
+          </div>
+        </div>
+        
+        <h3 className="text-xl font-semibold text-gray-800 text-center mb-3">
           {title}
         </h3>
-        <ExternalLink className="w-5 h-5 text-muted-foreground" />
+        
+        {description && (
+          <p className="text-sm text-gray-600 text-center leading-relaxed mb-6">
+            {description}
+          </p>
+        )}
+        
+        <div className="flex justify-center">
+          <Button 
+            variant="default"
+            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium px-6 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg group-hover:scale-105"
+            data-testid={`button-start-${title.toLowerCase()}`}
+          >
+            퀴즈 시작하기
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
       </div>
-      {description && (
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {description}
-        </p>
-      )}
     </div>
   );
 }
