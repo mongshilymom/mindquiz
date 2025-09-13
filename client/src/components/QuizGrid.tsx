@@ -10,32 +10,32 @@ const quizzes: Quiz[] = [
   {
     title: "MBTI",
     url: "https://mbti.mindquiz.app",
-    description: "16가지 성격 유형 중 나는 어떤 타입일까요?"
+    description: "16가지 유형으로 알아보는 진짜 '나' 발견하기"
   },
   {
-    title: "Teto Egen",
+    title: "테토 에겐",
     url: "https://tetoegen.mindquiz.app", 
-    description: "창의적 사고와 문제 해결 능력을 테스트해보세요"
+    description: "나만의 애착 유형 진단"
   },
   {
     title: "KLoopi",
     url: "https://kloopi.mindquiz.app",
-    description: "감정의 패턴과 심리 상태를 분석합니다"
+    description: "나는 깊게 몰입할까, 멀티태스킹에 능할까?"
   },
   {
-    title: "Decision",
+    title: "결정 나침반",
     url: "https://dicision.mindquiz.app",
-    description: "결정을 내리는 방식과 선택의 기준을 알아봅니다"
+    description: "갈림길에서 나는 어떤 선택을 내리는 사람일까?"
   },
   {
     title: "Life Choice",
     url: "https://lifechoice.mindquiz.app",
-    description: "인생의 가치관과 우선순위를 탐색해보세요"
+    description: "작은 성취감으로 주는 보상"
   },
   {
     title: "First Click",
     url: "https://firstclick.mindquiz.app",
-    description: "첫 직감과 무의식적 선택의 의미를 발견합니다"
+    description: "아침에 일어나마자 하는 첫 클릭"
   }
 ];
 

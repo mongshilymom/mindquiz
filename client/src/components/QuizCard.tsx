@@ -10,18 +10,18 @@ interface QuizCardProps {
 
 const iconMap = {
   "MBTI": User,
-  "Teto Egen": Lightbulb,
+  "테토 에겐": Lightbulb,
   "KLoopi": Smile,
-  "Decision": GitBranch,
+  "결정 나침반": GitBranch,
   "Life Choice": CheckSquare,
   "First Click": MousePointer,
 };
 
 const colorMap = {
   "MBTI": "border-blue-400",
-  "Teto Egen": "border-amber-400",
+  "테토 에겐": "border-amber-400",
   "KLoopi": "border-pink-400",
-  "Decision": "border-emerald-400",
+  "결정 나침반": "border-emerald-400",
   "Life Choice": "border-purple-400",
   "First Click": "border-cyan-400",
 };
