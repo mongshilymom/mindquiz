@@ -1,0 +1,93 @@
+목적: server/routes.ts 하단에 남은 한국어 텍스트/메모를 제거하고, 코드만 있는 파일로 재작성.
+아래 순서대로 파일을 정확히 덮어써 주세요. (추가/append 금지, 전체 교체)
+
+0) 점검(선택)
+
+콘솔에서 server/routes.ts의 320~340행을 출력해 한국어 텍스트가 있으면 바로 다음 단계로 이동해 덮어쓰세요.
+
+1) server/personality.ts (신규 또는 교체)
+// server/personality.ts
+export const personalityTypes = {
+  PJEM: { label: '통찰력 있는 전략가' },
+  RJEM: { label: '신뢰를 주는 리더' },
+  RFEM: { label: '에너자이저 활동가' }
+  // TODO: 16개 전체 채우기
+} as const;
+
+export type PersonalityKey = keyof typeof personalityTypes;
+
+2) server/routes.ts 전체를 아래 내용으로 교체 (파일 끝에 아무 텍스트도 남기지 말 것)
+// server/routes.ts
+import express from 'express';
+import { personalityTypes, PersonalityKey } from './personality';
+
+const router = express.Router();
+
+// 헬스체크
+router.get('/api/health', (_req, res) => res.json({ ok: true }));
+
+// 데모: 위젯 id로 임의 페르소나 키 반환
+function getPersonaKeyFromWidget(_id: string): PersonalityKey {
+  const keys = Object.keys(personalityTypes) as PersonalityKey[];
+  const idx = Math.floor(Math.random() * keys.length);
+  return keys[idx];
+}
+
+// 샘플 API
+router.get('/api/result/:id', (req, res) => {
+  const key = getPersonaKeyFromWidget(req.params.id);
+  res.json({ type: key, ...personalityTypes[key] });
+});
+
+export default router;
+
+
+⚠️ 주의: 위 코드 이후에 다른 문장(한국어 설명/메모) 한 줄이라도 남아 있으면 다시 같은 에러가 납니다. 파일 끝은 export default router; 로 끝나야 합니다.
+
+3) server/index.ts (최소 서버 – 필요 시 교체)
+// server/index.ts
+import express from 'express';
+import router from './routes';
+
+const app = express();
+app.use(express.json());
+app.use(router);
+
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+app.listen(PORT, () => console.log(`[MindQuiz] http://localhost:${PORT}`));
+
+4) tsconfig.json 확인/생성
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["server/**/*"]
+}
+
+5) package.json 스크립트 확인
+
+"type": "module" 키가 없다면 추가
+
+dev 스크립트:
+
+{
+  "scripts": {
+    "dev": "NODE_ENV=development tsx watch server/index.ts"
+  }
+}
+
+6) 재기동 & 검증
+
+npm run dev
+
+브라우저/프리뷰에서:
+
+/api/health → { "ok": true }
+
+/api/result/test → { "type": "PJEM", "label": "통찰력 있는 전략가" } (랜덤 키일 수 있음)
