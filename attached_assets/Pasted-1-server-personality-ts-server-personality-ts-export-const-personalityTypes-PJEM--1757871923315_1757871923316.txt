@@ -1,0 +1,90 @@
+1) server/personality.ts 생성/갱신
+// server/personality.ts
+export const personalityTypes = {
+  PJEM: { label: '통찰력 있는 전략가' },
+  RJEM: { label: '신뢰를 주는 리더' },
+  RFEM: { label: '에너자이저 활동가' },
+  // TODO: 나머지 13개 타입도 동일 포맷으로 채워넣기
+} as const;
+
+export type PersonalityKey = keyof typeof personalityTypes;
+
+2) server/routes.ts를 완전히 교체
+// server/routes.ts
+import express from 'express';
+import { personalityTypes, PersonalityKey } from './personality';
+
+const router = express.Router();
+
+// 데모: 위젯 id로 임의 페르소나 키 반환
+function getPersonaKeyFromWidget(id: string): PersonalityKey {
+  const keys = Object.keys(personalityTypes) as PersonalityKey[];
+  const idx = Math.floor(Math.random() * keys.length);
+  return keys[idx];
+}
+
+// 샘플 API
+router.get('/api/result/:id', (req, res) => {
+  const key = getPersonaKeyFromWidget(req.params.id);
+  res.json({ type: key, ...personalityTypes[key] });
+});
+
+export default router;
+
+3) server/index.ts 최소 구동 보장(필요 시 교체)
+// server/index.ts
+import express from 'express';
+import router from './routes';
+
+const app = express();
+app.use(express.json());
+app.use(router);
+
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+app.listen(PORT, () => {
+  console.log(`[MindQuiz] REST server running on http://localhost:${PORT}`);
+});
+
+4) tsconfig.json 정렬(없으면 생성, 있으면 병합)
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"]
+  },
+  "include": ["server/**/*"]
+}
+
+5) package.json 점검(필요 시만 수정)
+
+"type": "module" 키가 없다면 추가.
+
+scripts.dev가 아래 형태인지 확인, 아니면 교체:
+
+{
+  "scripts": {
+    "dev": "NODE_ENV=development tsx watch server/index.ts"
+  }
+}
+
+6) 전역 치환(혹시 남아있다면 실행)
+
+keyof type of → keyof typeof
+
+type of → typeof
+
+module.exports = router;가 남아있다면 삭제(우리는 export default router만 사용)
+
+7) 재기동 & 검증
+
+npm run dev 실행
+
+콘솔 에러 없으면 브라우저/프리뷰에서 /api/result/test 열기
+기대 응답 예:
+
+{ "type": "PJEM", "label": "통찰력 있는 전략가" }
