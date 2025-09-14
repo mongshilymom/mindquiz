@@ -1,0 +1,72 @@
+ MindQuiz 통합 아키텍처 구축
+너는 Node.js와 Express에 능숙한 풀스택 개발자다. 여러 개로 흩어져 있는 퀴즈 프로젝트를 하나의 통합된 허브(Hub) 프로젝트로 리팩토링하는 작업을 시작한다. 각 퀴즈는 독립적인 '플러그인'처럼 관리할 수 있는 확장 가능한 구조를 만들어야 한다.
+
+아래의 명세에 따라 프로젝트 구조를 설계하고, 핵심 로직을 구현해줘.
+
+1. 기본 폴더 및 파일 구조 생성:
+프로젝트 루트에 아래와 같은 폴더와 파일을 생성해줘.
+
+/
+├── server.js              # Express 메인 서버 파일
+├── /tests                 # 모든 퀴즈 로직이 저장될 디렉터리
+│   └── /sample            # 동작 검증을 위한 샘플 퀴즈
+│       ├── config.json
+│       └── index.js
+├── /views                 # EJS 템플릿 파일
+│   ├── test.ejs           # 모든 퀴즈가 공통으로 사용할 진행 화면
+│   └── result.ejs         # 모든 퀴즈가 공통으로 사용할 결과 화면
+└── /public                # 정적 파일 (CSS, 클라이언트 JS)
+    └── /js
+        └── share.js       # 공통 공유 기능 스크립트
+2. 서버 로직 구현 (server.js):
+Express 서버를 설정하고, 아래의 핵심 로직을 추가해줘.
+
+테스트 레지스트리: 서버가 시작될 때 /tests 폴더를 자동으로 스캔해서, 그 안에 있는 모든 퀴즈(폴더)를 메모리에 등록하는 시스템을 만들어줘. 이렇게 하면 나중에 퀴즈를 추가할 때 폴더만 복사하면 자동으로 인식될 수 있어.
+
+라우팅 규칙: 아래의 URL 경로 규칙에 따라 페이지를 렌더링하도록 라우터를 설정해줘.
+
+GET /test/:slug: 퀴즈 진행 페이지. :slug는 퀴즈의 고유 ID(예: mbti, life-fit). test.ejs 템플릿을 사용하고, 해당 퀴즈의 config.json 정보를 전달해야 해.
+
+POST /test/:slug/submit: 퀴즈 답변을 제출받는 경로. 답변 데이터를 해당 퀴즈의 index.js에 있는 채점 함수로 보내고, 결과가 나오면 /result/:slug 경로로 리디렉션시켜줘.
+
+GET /result/:slug: 퀴즈 결과 페이지. result.ejs 템플릿을 사용하고, 결과 코드, 페르소나 정보, 동적 OG 이미지 URL 등을 전달해야 해.
+
+3. 샘플 퀴즈 제작 (/tests/sample):
+위 구조가 잘 작동하는지 확인하기 위해, 아래 내용으로 샘플 퀴즈를 만들어줘.
+
+/tests/sample/config.json:
+
+JSON
+
+{
+  "title": "샘플 테스트",
+  "questions": [
+    { "id": "q1", "text": "나는 계획을 세우고 일하는 것을 좋아한다." },
+    { "id": "q2", "text": "새로운 사람들을 만나는 것은 나에게 에너지를 준다." }
+  ]
+}
+/tests/sample/index.js:
+
+JavaScript
+
+// 답변(answers)을 받아 점수를 계산하는 함수
+export function score(answers) {
+  console.log("채점할 답변:", answers);
+  // 간단한 점수 로직 (예시)
+  const scoreC = answers.q1 > 3 ? 70 : 30; // 성실성
+  const scoreE = answers.q2 > 3 ? 80 : 40; // 외향성
+  return { C: scoreC, E: scoreE };
+}
+
+// 점수를 음성 코드로 변환하는 함수
+export function toPhonoCode({ C, E }) {
+  const codeC = C > 50 ? 'J' : 'F';
+  const codeE = E > 50 ? 'E' : 'I';
+  // 실제로는 4글자 코드를 반환해야 함 (예시)
+  return `RF${codeE}H`;
+}
+4. 공통 뷰 템플릿 제작 (/views):
+
+test.ejs: 어떤 퀴즈든 config.json의 질문들을 받아서 표시할 수 있는 공통 레이아웃으로 만들어줘.
+
+result.ejs: 어떤 결과든 페르소나 이름, 설명, 동적 OG 이미지, 공통 공유 버튼 등을 표시할 수 있는 공통 레이아웃으로 만들어줘.

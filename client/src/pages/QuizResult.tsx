@@ -8,53 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Crown, Share2, Download } from 'lucide-react';
 
-// Mock data for demonstration
-const mockQuizResult = {
-  id: "test-quiz-result-1",
-  type: "INTJ", 
-  persona: "통찰력 있는 전략가",
-  quizType: "MBTI",
-  meme: "큰 그림을 그리는 사람",
-  description: "독립적이고 창의적이며 미래 지향적인 성격을 가지고 있습니다."
-};
-
-const mockPremiumReport = {
-  id: "premium-report-1",
-  reportType: "detailed",
-  reportData: {
-    detailedAnalysis: `
-      당신의 INTJ 성격 유형은 전체 인구의 약 1-3%에 해당하는 희귀한 유형입니다.
-      
-      **주요 특징:**
-      • 강한 직관력과 분석적 사고
-      • 독립적이고 자율적인 성향
-      • 장기적 비전과 전략적 사고
-      • 완벽주의 성향
-      
-      **강점:**
-      • 복잡한 문제를 체계적으로 해결하는 능력
-      • 미래를 예측하고 계획하는 뛰어난 능력
-      • 독창적이고 혁신적인 아이디어 창출
-      • 목표 달성을 위한 강한 의지력
-      
-      **개선 포인트:**
-      • 타인의 감정을 이해하고 공감하는 능력 개발
-      • 완벽주의로 인한 스트레스 관리
-      • 의사소통 스킬 향상
-      • 팀워크와 협업 능력 강화
-    `,
-    recommendations: [
-      "논리적이고 체계적인 업무 환경을 선택하세요",
-      "창의적 문제 해결이 가능한 분야에서 능력을 발휘하세요",
-      "정기적인 휴식과 스트레스 관리를 통해 번아웃을 방지하세요",
-      "다양한 관점을 수용하고 타인과의 소통을 늘려보세요"
-    ],
-    careerSuggestions: [
-      "전략 컨설턴트", "연구원", "시스템 분석가", "건축가", 
-      "프로젝트 매니저", "데이터 사이언티스트", "창업가"
-    ]
-  }
-};
 
 export default function QuizResult() {
   const [, setLocation] = useLocation();
@@ -78,16 +31,15 @@ export default function QuizResult() {
     }
   }, []);
 
-  // Mock data - TODO: Replace with actual API call
+  // 퀴즈 결과 조회
   const { data: quizResult, isLoading } = useQuery({
     queryKey: ['/api/quiz-results', params?.id],
-    queryFn: async () => mockQuizResult,
     enabled: !!params?.id
   });
 
+  // 프리미엄 리포트 조회
   const { data: premiumReport, isLoading: isPremiumLoading } = useQuery({
     queryKey: ['/api/premium-reports', params?.id],
-    queryFn: async () => mockPremiumReport,
     enabled: isPremium && !!params?.id
   });
 
