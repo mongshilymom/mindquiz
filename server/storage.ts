@@ -25,11 +25,14 @@ export interface IStorage {
   // 퀴즈 결과 관련
   createQuizResult(result: InsertQuizResult): Promise<QuizResult>;
   getQuizResult(id: string): Promise<QuizResult | undefined>;
+  getQuizResultById(id: string): Promise<QuizResult | undefined>;
   getQuizResultsByUser(userId: string): Promise<QuizResult[]>;
   
   // 결제 관련
   createPayment(payment: InsertPayment): Promise<Payment>;
   getPayment(id: string): Promise<Payment | undefined>;
+  getPaymentById(id: string): Promise<Payment | undefined>;
+  updatePayment(id: string, updates: Partial<Payment>): Promise<Payment | undefined>;
   updatePaymentStatus(id: string, status: string, transactionId?: string, completedAt?: Date): Promise<Payment | undefined>;
   
   // 프리미엄 리포트 관련
@@ -72,6 +75,11 @@ export class DatabaseStorage implements IStorage {
     return result || undefined;
   }
 
+  async getQuizResultById(id: string): Promise<QuizResult | undefined> {
+    const [result] = await db.select().from(quizResults).where(eq(quizResults.id, id));
+    return result || undefined;
+  }
+
   async getQuizResultsByUser(userId: string): Promise<QuizResult[]> {
     return await db.select().from(quizResults).where(eq(quizResults.userId, userId));
   }
@@ -87,6 +95,20 @@ export class DatabaseStorage implements IStorage {
 
   async getPayment(id: string): Promise<Payment | undefined> {
     const [payment] = await db.select().from(payments).where(eq(payments.id, id));
+    return payment || undefined;
+  }
+
+  async getPaymentById(id: string): Promise<Payment | undefined> {
+    const [payment] = await db.select().from(payments).where(eq(payments.id, id));
+    return payment || undefined;
+  }
+
+  async updatePayment(id: string, updates: Partial<Payment>): Promise<Payment | undefined> {
+    const [payment] = await db
+      .update(payments)
+      .set(updates)
+      .where(eq(payments.id, id))
+      .returning();
     return payment || undefined;
   }
 

@@ -49,23 +49,38 @@ export default function Payment() {
         reportType: '심화 분석 리포트'
       });
       
-      // TODO: Call /api/payment/kakao/ready
-      // const response = await apiRequest('/api/payment/kakao/ready', {
-      //   method: 'POST',
-      //   body: {
-      //     quizResultId: params?.quizResultId,
-      //     amount: 9900,
-      //     reportType: 'detailed'
-      //   }
-      // });
+      // 카카오페이 결제 준비 API 호출
+      const response = await fetch('/api/payment/kakao/ready', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          quizResultId: params?.quizResultId,
+          amount: 9900,
+          reportType: '심화 분석 리포트'
+        })
+      });
+
+      const result = await response.json();
       
-      // TODO: Redirect to KakaoPay payment page
-      // window.location.href = response.redirectUrl;
-      
-      alert('카카오페이 결제를 시작합니다. (현재 데모 모드)');
+      if (response.ok && result.success) {
+        // 카카오페이 결제 페이지로 리다이렉트 (데모에서는 Mock URL)
+        console.log('카카오페이 결제 페이지로 리다이렉트:', result.redirectUrl);
+        
+        // 실제 환경에서는 다음과 같이 리다이렉트합니다:
+        // window.location.href = result.redirectUrl;
+        
+        // 데모용: Mock 승인 페이지로 리다이렉트
+        const mockApprovalUrl = `/api/payment/kakao/approve?payment_id=${result.paymentId}&pg_token=mock_pg_token`;
+        window.location.href = mockApprovalUrl;
+        
+      } else {
+        throw new Error(result.error || '결제 준비에 실패했습니다.');
+      }
     } catch (error) {
       console.error('카카오페이 결제 오류:', error);
-      alert('결제 처리 중 오류가 발생했습니다.');
+      alert('결제 처리 중 오류가 발생했습니다: ' + (error as Error).message);
     }
   };
 
@@ -77,8 +92,8 @@ export default function Payment() {
         reportType: '심화 분석 리포트'
       });
       
-      // TODO: Call /api/payment/naver/ready
-      alert('네이버페이 결제를 시작합니다. (현재 데모 모드)');
+      // TODO: 네이버페이 API 구현 후 활성화
+      alert('네이버페이 결제는 다음 단계에서 구현됩니다.');
     } catch (error) {
       console.error('네이버페이 결제 오류:', error);
       alert('결제 처리 중 오류가 발생했습니다.');

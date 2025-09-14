@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
 import Payment from "@/pages/Payment";
+import QuizResult from "@/pages/QuizResult";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -12,6 +13,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/payment/:quizResultId" component={Payment} />
+      <Route path="/quiz-result/:id" component={QuizResult} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
