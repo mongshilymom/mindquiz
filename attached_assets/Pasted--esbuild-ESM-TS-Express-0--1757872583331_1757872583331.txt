@@ -1,0 +1,80 @@
+목표: esbuild 변환 오류의 원인(문법깨짐/비코드 잔여/ESM 혼선)을 제거하고 정상 TS+Express 최소 서버로 재가동.
+
+0) 서버 중지 후 의존성 정리
+# 의존성 정리
+npm pkg set type=module
+npm pkg set scripts.dev="tsx watch --clear-screen=false server/index.ts"
+npm i express
+npm i -D typescript tsx@^4
+
+1) tsconfig.json 생성/교체
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["server/**/*"]
+}
+
+2) server/personality.ts 생성/교체
+// server/personality.ts
+export const personalityTypes = {
+  PJEM: { label: '통찰력 있는 전략가' },
+  RJEM: { label: '신뢰를 주는 리더' },
+  RFEM: { label: '에너자이저 활동가' }
+  // TODO: 16개 전부 채우기
+} as const;
+
+export type PersonalityKey = keyof typeof personalityTypes;
+
+3) server/routes.ts 전체 교체(⚠️ 파일 끝에 어떤 한국어 문장/메모도 남기지 말 것)
+// server/routes.ts
+import express from 'express';
+import { personalityTypes, PersonalityKey } from './personality.js';
+
+const router = express.Router();
+
+router.get('/api/health', (_req, res) => res.json({ ok: true }));
+
+function getPersonaKeyFromWidget(_id: string): PersonalityKey {
+  const keys = Object.keys(personalityTypes) as PersonalityKey[];
+  const idx = Math.floor(Math.random() * keys.length);
+  return keys[idx];
+}
+
+router.get('/api/result/:id', (req, res) => {
+  const key = getPersonaKeyFromWidget(req.params.id);
+  res.json({ type: key, ...personalityTypes[key] });
+});
+
+export default router;
+
+4) server/index.ts 전체 교체
+// server/index.ts
+import express from 'express';
+import router from './routes.js';
+
+const app = express();
+app.use(express.json());
+app.use(router);
+
+const PORT = Number(process.env.PORT || 3000);
+app.listen(PORT, () => {
+  console.log(`[MindQuiz] REST server running on http://localhost:${PORT}`);
+});
+
+5) 개발 서버 재기동
+npm run dev
+
+6) 동작 확인
+
+브라우저/프리뷰에서 /_health가 아닌 /api/health → { "ok": true }
+
+/api/result/test → { "type":"PJEM", "label":"통찰력 있는 전략가" }(키는 랜덤일 수 있음)
+
+만약 여전히 크래시가 난다면, 콘솔 전체 로그를 붙여주세요. routes.ts 320~340행 원문도 함께 주시면 그 줄만 정밀 패치해서 바로 고칩니다.
