@@ -1,37 +1,44 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+// vite.config.mts
+import { defineConfig } from "vite"
+import react from "@vitejs/plugin-react"
+import { resolve, dirname } from "node:path"
+import { fileURLToPath } from "node:url"
 
-export default defineConfig({
-  plugins: [
-    react(),
-    runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-        ]
-      : []),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(import.meta.dirname, "client", "src"),
-      "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+export default defineConfig(async ({ command }) => {
+  const plugins = [react()]
+
+  // 개발 서버에서만 Replit 플러그인 로드 (빌드/배포 제외)
+  if (command === "serve") {
+    const [{ default: runtimeErrorOverlay }, cartoMod] = await Promise.all([
+      import("@replit/vite-plugin-runtime-error-modal"),
+      process.env.REPL_ID ? import("@replit/vite-plugin-cartographer") : Promise.resolve(null)
+    ])
+    plugins.push(runtimeErrorOverlay())
+    if (cartoMod) {
+      const cartographer = (cartoMod.cartographer ?? cartoMod.default ?? cartoMod)()
+      plugins.push(cartographer)
+    }
+  }
+
+  return {
+    plugins,
+    resolve: {
+      alias: {
+        "@": resolve(__dirname, "client", "src"),
+        "@shared": resolve(__dirname, "shared"),
+        "@assets": resolve(__dirname, "attached_assets")
+      }
     },
-  },
-  root: path.resolve(import.meta.dirname, "client"),
-  build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
-    emptyOutDir: true,
-  },
-  server: {
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
+    root: resolve(__dirname, "client"),
+    build: {
+      outDir: resolve(__dirname, "dist/public"),
+      emptyOutDir: true,
+      target: "esnext"
     },
-  },
-});
+    server: {
+      fs: { strict: true, deny: ["**/.*"] }
+    }
+  }
+})
