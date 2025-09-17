@@ -8,6 +8,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      (function(){
+        const id = import.meta.env.VITE_GA4_ID;
+        if (!id) return;
+        const s1 = document.createElement('script');
+        s1.async = true;
+        s1.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+        document.head.appendChild(s1);
+        const s2 = document.createElement('script');
+        s2.innerHTML = `
+          window.dataLayer=window.dataLayer||[];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date()); gtag('config','${id}');
+        `;
+        document.head.appendChild(s2);
+      })();
+    </script>
+    <script>
+      // Kakao SDK 동적 로드
+      (function(){
+        var key = (window?.import_meta?.env?.VITE_KAKAO_JS_KEY) || (window?.__vite__?.env?.VITE_KAKAO_JS_KEY) || null;
+        if (!key && typeof importMeta !== 'undefined') key = import.meta.env.VITE_KAKAO_JS_KEY;
+        if (!key) return;
+        var s=document.createElement('script'); s.async=true; s.src='https://developers.kakao.com/sdk/js/kakao.min.js';
+        s.onload=function(){ if(window.Kakao && !window.Kakao.isInitialized()) window.Kakao.init(key); };
+        document.head.appendChild(s);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

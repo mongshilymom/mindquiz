@@ -202,3 +202,8 @@ rate(revenue_krw_total[1h])
 ### 변경 이력
 - v1.0 — 초판 작성 (운영 런북/지표/롤백 절차 정리)
 
+
+
+### C) `docs/OPERATIONS.md` 맨 아래 추가(1줄)
+```md
+추가 참고: [Prometheus/Grafana & Nginx 노트](./ops/monitoring-and-nginx-notes.md)

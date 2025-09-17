@@ -1,0 +1,21 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"/>
+<title>MindQuiz Hub</title>
+<style>
+body{font-family:system-ui,Segoe UI,Roboto,Noto Sans KR,sans-serif;margin:0}
+header{position:sticky;top:0;background:#fffccf;padding:14px 20px;border-bottom:1px solid #eee}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));padding:20px;max-width:1000px;margin:0 auto}
+.card{border:1px solid #e5e7eb;border-radius:14px;padding:14px;background:#fff}
+.card h3{margin:0 0 8px 0}
+.btn{display:inline-block;padding:8px 12px;background:#0284c7;color:#fff;border-radius:10px;text-decoration:none}
+</style></head><body>
+<header><strong>MindQuiz</strong> — 테스트 허브</header>
+<main class="grid">
+  <% cards.forEach(c=>{ %>
+    <div class="card">
+      <h3><%= c.title %></h3>
+      <p>샘플 결과로 진입합니다.</p>
+      <a class="btn" href="<%= c.url %>">열기</a>
+    </div>
+  <% }) %>
+</main>
+</body></html>

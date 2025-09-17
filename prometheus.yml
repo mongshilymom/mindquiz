@@ -1,0 +1,30 @@
+# Prometheus configuration for MindQuiz monitoring
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  - job_name: 'mindquiz'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['mindquiz.app']   # Nginx가 /metrics 프록시 중
+        labels:
+          env: 'prod'
+          service: 'mindquiz'
+
+  - job_name: 'mindquiz-dev'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['localhost:3004']
+        labels:
+          env: 'dev'
+          service: 'mindquiz'

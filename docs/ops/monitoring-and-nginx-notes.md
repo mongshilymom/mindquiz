@@ -184,3 +184,29 @@ npm run rotate
 - **Technical Issues**: [Your technical team contact]
 - **Payment Issues**: [Your payment team contact]
 - **Security Issues**: [Your security team contact]
+
+# Monitoring & Nginx Notes (MindQuiz)
+
+## Prometheus 스크레이프 예시
+```yaml
+scrape_configs:
+  - job_name: mindquiz
+    metrics_path: /metrics
+    params:
+      token: [${METRICS_TOKEN}]
+    static_configs:
+      - targets: ['mindquiz.app']
+
+
+# /metrics 보호(사내 IP만)
+location /metrics {
+  allow 1.2.3.4; deny all;
+  proxy_pass http://127.0.0.1:3004/metrics;
+}
+
+# 레이트 리밋 (예시값)
+limit_req_zone $binary_remote_addr zone=mq_api:10m rate=10r/s;
+location /api/ {
+  limit_req zone=mq_api burst=30 nodelay;
+  proxy_pass http://127.0.0.1:3004;
+}

@@ -1,0 +1,9 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"/><title>결제 실패</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<style>body{font-family:system-ui,Noto Sans KR,Roboto,sans-serif;max-width:640px;margin:0 auto;padding:24px}</style></head>
+<body>
+<h1>결제 실패</h1>
+<p>주문번호: <%= orderId %></p>
+<p><%= msg || '결제에 실패했습니다. 다시 시도해 주세요.' %></p>
+<p><a href="/app/result/<%= orderId %>">결과 페이지로 돌아가기</a></p>
+</body></html>

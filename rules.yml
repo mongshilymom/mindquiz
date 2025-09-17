@@ -1,0 +1,48 @@
+# Prometheus alerting rules for MindQuiz
+groups:
+- name: mindquiz
+  rules:
+  - alert: MQ_High5xx
+    expr: increase(http_5xx_total[5m]) > 5
+    for: 2m
+    labels:
+      severity: page
+    annotations:
+      summary: "MindQuiz: High 5xx errors (last 5m)"
+      description: "{{ $value }} 5xx errors in the last 5 minutes"
+
+  - alert: MQ_PaymentFailures
+    expr: increase(payment_failure_total[10m]) > 10
+    for: 5m
+    labels:
+      severity: page
+    annotations:
+      summary: "MindQuiz: Payment failures spiking"
+      description: "{{ $value }} payment failures in the last 10 minutes"
+
+  - alert: MQ_NoBackups24h
+    expr: time() - mq_last_backup_timestamp > 86400
+    for: 10m
+    labels:
+      severity: warn
+    annotations:
+      summary: "MindQuiz: No backup in >24h"
+      description: "Last backup was {{ humanizeDuration (time() - mq_last_backup_timestamp) }} ago"
+
+  - alert: MQ_HighErrorRate
+    expr: (increase(http_5xx_total[5m]) / increase(payment_ready_calls_total[5m])) > 0.1
+    for: 3m
+    labels:
+      severity: warn
+    annotations:
+      summary: "MindQuiz: High error rate"
+      description: "Error rate is {{ $value | humanizePercentage }} over the last 5 minutes"
+
+  - alert: MQ_NoPaymentActivity
+    expr: increase(payment_ready_calls_total[1h]) == 0
+    for: 2h
+    labels:
+      severity: info
+    annotations:
+      summary: "MindQuiz: No payment activity"
+      description: "No payment attempts in the last hour"

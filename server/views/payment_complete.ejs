@@ -1,0 +1,12 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"/><title>결제 완료</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/></head>
+<body style="font-family:system-ui,Noto Sans KR,Roboto,sans-serif;max-width:640px;margin:0 auto;padding:24px">
+<h1>결제가 완료되었습니다 🎉</h1>
+<p>주문번호: <%= orderId %></p>
+<% if ((exp||'A')==='B') { %>
+  <p>💡 카톡으로 공유하면 확장팩 무료</p>
+<% } else { %>
+  <p>💡 결과 공유하고 10% 할인 쿠폰 받기</p>
+<% } %>
+<p><a href="/app/result/<%= orderId %>">내 결과 보기</a></p>
+</body></html>

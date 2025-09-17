@@ -1,0 +1,84 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"/>
+<title>Admin</title>
+<style>
+body{font-family:system-ui,Segoe UI,Roboto,Noto Sans KR,sans-serif;max-width:1100px;margin:0 auto;padding:16px}
+nav a{margin-right:10px}
+table{border-collapse:collapse;width:100%} th,td{border:1px solid #e2e8f0;padding:6px;font-size:12px}
+.badge{display:inline-block;padding:2px 8px;border:1px solid #cbd5e1;border-radius:999px;font-size:11px}
+form{margin:10px 0;padding:10px;border:1px solid #e2e8f0;border-radius:10px}
+input,select{height:34px;border:1px solid #e2e8f0;border-radius:8px;padding:0 8px;margin-right:6px}
+button{height:34px;border-radius:8px;padding:0 12px;border:1px solid #cbd5e1;background:#fff}
+.section{margin:16px 0}
+</style></head><body>
+<h1>Admin</h1>
+<nav>
+  <a href="/admin/logs?pass=<%= pass %>&tab=orders">orders</a>
+  <a href="/admin/logs?pass=<%= pass %>&tab=coupons">coupons</a>
+  <a href="/admin/logs?pass=<%= pass %>&tab=events">events</a>
+  <a href="/admin/logs?pass=<%= pass %>&tab=<%= (typeof tab!=='undefined'?tab:'orders') %>&csv=1">CSV</a>
+  <a href="/admin/files?pass=<%= pass %>&tab=archive">archive</a>
+  <a href="/admin/files?pass=<%= pass %>&tab=backup">backup</a>
+  <a href="/admin/status?pass=<%= pass %>">status</a>
+  <span class="badge">pass=<%= pass %></span>
+</nav>
+
+<div class="section">
+  <h2>Refund/Cancel</h2>
+  <form method="post" id="refundForm">
+    <input type="hidden" name="pass" value="<%= pass %>"/>
+    <select name="provider" id="provider" onchange="updateAction()">
+      <option value="kakao">kakao</option>
+      <option value="naver">naver</option>
+    </select>
+    <input name="orderId" placeholder="orderId" required/>
+    <input name="reason" placeholder="reason" value="admin_cancel"/>
+    <label><input type="checkbox" name="reissue" value="1"/> reissue coupon</label>
+    <button type="submit">Cancel</button>
+  </form>
+  <script>
+    function updateAction() {
+      const provider = document.getElementById('provider').value;
+      document.getElementById('refundForm').action = `/admin/payment/${provider}/cancel`;
+    }
+    updateAction(); // Set initial action
+  </script>
+</div>
+
+<div class="section">
+  <h2>Prune (보존정리)</h2>
+  <form method="post" action="/admin/prune">
+    <input type="hidden" name="pass" value="<%= pass %>"/>
+    <input name="days" placeholder="days" value="30" />
+    <button type="submit">Prune Now</button>
+  </form>
+</div>
+
+<% if (typeof files !== 'undefined') { %>
+  <h2>Files: <%= files.tab %></h2>
+  <nav>
+    <a href="/admin/files?pass=<%= pass %>&tab=archive">archive</a>
+    <a href="/admin/files?pass=<%= pass %>&tab=backup">backup</a>
+  </nav>
+  <table><thead><tr><th>name</th><th>size(bytes)</th><th>mtime</th><th>dl</th></tr></thead><tbody>
+    <% files.rows.forEach(f=>{ %>
+      <tr>
+        <td><%= f.name %></td>
+        <td><%= f.size %></td>
+        <td><%= new Date(f.mtime).toISOString() %></td>
+        <td><a href="/admin/file?pass=<%= pass %>&scope=<%= files.tab %>&name=<%= encodeURIComponent(f.name) %>">download</a></td>
+      </tr>
+    <% }) %>
+  </tbody></table>
+<% } else { %>
+  <table>
+    <thead><tr><% Object.keys(rows[0]||{ts:0}).forEach(k=>{ %><th><%= k %></th><% }) %></tr></thead>
+    <tbody>
+      <% rows.forEach(r=>{ %>
+        <tr><% Object.keys(rows[0]||{ts:0}).forEach(k=>{ %><td><%= (r[k]??'') %></td><% }) %></tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <p><a href="/admin/files?pass=<%= pass %>&tab=archive">archive files</a> ·
+     <a href="/admin/files?pass=<%= pass %>&tab=backup">backup files</a></p>
+<% } %>
+</body></html>
