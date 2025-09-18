@@ -1,7 +1,5 @@
 // client/src/utils/webVitals.ts
-// Web Vitals collection and reporting
-
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
+// Web Vitals collection and reporting with dynamic imports
 
 interface VitalMetric {
   name: string;
@@ -39,16 +37,36 @@ async function sendMetric(metric: VitalMetric) {
   }
 }
 
-// Initialize Web Vitals collection
-export function initWebVitals() {
-  // Core Web Vitals
-  getCLS(sendMetric);  // Cumulative Layout Shift
-  getFID(sendMetric);  // First Input Delay
-  getLCP(sendMetric);  // Largest Contentful Paint
+// Initialize Web Vitals collection with dynamic imports
+export async function initWebVitals() {
+  try {
+    const { getCLS, getFID, getFCP, getLCP, getTTFB } = await import('web-vitals');
 
-  // Additional useful metrics
-  getFCP(sendMetric);  // First Contentful Paint
-  getTTFB(sendMetric); // Time to First Byte
+    // Core Web Vitals
+    getCLS(sendMetric);  // Cumulative Layout Shift
+    getFID(sendMetric);  // First Input Delay
+    getLCP(sendMetric);  // Largest Contentful Paint
+
+    // Additional useful metrics
+    getFCP(sendMetric);  // First Contentful Paint
+    getTTFB(sendMetric); // Time to First Byte
+  } catch (error) {
+    console.debug('Failed to load web-vitals:', error);
+  }
+}
+
+// Utility function for reporting web vitals with callback
+export async function reportWebVitals(cb: (metric: VitalMetric) => void) {
+  try {
+    const { getCLS, getFID, getFCP, getLCP, getTTFB } = await import('web-vitals');
+    getCLS(cb);
+    getFID(cb);
+    getFCP(cb);
+    getLCP(cb);
+    getTTFB(cb);
+  } catch (error) {
+    console.debug('Failed to load web-vitals:', error);
+  }
 }
 
 // Manual metric reporting (for custom events)

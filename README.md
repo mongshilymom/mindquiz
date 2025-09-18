@@ -97,6 +97,22 @@ cd .. && npm i && npm run server         # http://localhost:3004
 ### Redeploy 시 주의사항
 새로운 배포 시 "Clear Build Cache" 옵션을 체크하여 빌드 캐시를 초기화하세요.
 
+## 🔧 트러블슈팅
+
+### ESM/CJS 충돌 방지
+- `vite.config.mts` 사용 (`.ts` 금지)
+- 개발 전용 플러그인은 `command === "serve"` 조건부 로딩
+- `package.json`에 `"type": "module"` 유지
+
+### 락파일 일관성
+- **pnpm@10** 전용: `corepack enable && corepack prepare pnpm@10 --activate`
+- Vercel 설정: `"installCommand": "pnpm install --no-frozen-lockfile"`
+- 로컬에서 `npm run build` 테스트 후 배포
+
+### web-vitals 최적화
+- 동적 import로 번들 크기 최적화
+- `optimizeDeps.include: ['web-vitals']` 설정으로 pre-bundling
+
 _____________________________________________________________
 
 # MindQuiz Web Application

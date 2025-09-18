@@ -37,6 +37,9 @@ export default defineConfig(async ({ command }) => {
       emptyOutDir: true,
       target: "esnext"
     },
+    optimizeDeps: {
+      include: ['web-vitals']
+    },
     server: {
       fs: { strict: true, deny: ["**/.*"] }
     }
