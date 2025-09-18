@@ -27,6 +27,9 @@
     "node": "20.x"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.891.0",
+    "@aws-sdk/client-ses": "^3.891.0",
+    "@aws-sdk/s3-request-presigner": "^3.891.0",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@neondatabase/serverless": "^0.10.4",
