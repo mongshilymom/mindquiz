@@ -36,13 +36,28 @@ export default defineConfig(async ({ command }) => {
     build: {
       outDir: resolve(__dirname, "dist/public"),
       emptyOutDir: true,
-      target: "esnext"
+      target: ["es2022", "edge79", "firefox67", "chrome64", "safari12"],
+      rollupOptions: {
+        output: {
+          format: 'es',
+          manualChunks: {
+            'web-vitals': ['web-vitals']
+          }
+        }
+      }
     },
     optimizeDeps: {
-      include: ['web-vitals']
+      include: ['web-vitals', 'react', 'react-dom'],
+      exclude: [],
+      esbuildOptions: {
+        target: 'es2022'
+      }
     },
     server: {
       fs: { strict: true, deny: ["**/.*"] }
+    },
+    esbuild: {
+      target: 'es2022'
     }
   }
 })
