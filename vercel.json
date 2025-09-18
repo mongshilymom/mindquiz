@@ -1,5 +1,12 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/public"
+  "outputDirectory": "dist/public",
+  "rewrites": [
+    {
+      "source": "/((?!api|assets|favicon\\.ico|robots\\.txt|sitemap\\.xml|.*\\.(css|js|png|jpg|jpeg|svg|webp|ico)$).*)",
+      "destination": "/index.html"
+    }
+  ]
 }

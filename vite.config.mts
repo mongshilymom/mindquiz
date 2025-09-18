@@ -24,6 +24,7 @@ export default defineConfig(async ({ command }) => {
 
   return {
     plugins,
+    base: "/",
     resolve: {
       alias: {
         "@": resolve(__dirname, "client", "src"),
