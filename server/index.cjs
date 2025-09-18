@@ -12,8 +12,12 @@ const HOST = process.env.HOST || '0.0.0.0';
 const PORT = Number(process.env.PORT) || 3000;
 const SITE = process.env.SITE_URL || `http://${HOST}:${PORT}`;
 
-app.disable('x-powered-by');
 app.use(express.json({ limit: '1mb' }));
+app.use("/api", require("./routes/upload.cjs"));
+app.use("/api", require("./routes/mail.cjs"));
+
+app.disable('x-powered-by');
+
 
 // --- 헬스체크 ---
 app.get('/api/health', (_req, res) => res.json({ ok: true, ts: Date.now() }));
@@ -110,3 +114,4 @@ app.listen(PORT, HOST, () => {
   console.log(`- Share(SSR):    ${SITE}/r/demo1`);
   console.log(`- Health:        ${SITE}/api/health`);
 });
+
